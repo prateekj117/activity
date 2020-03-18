@@ -25,12 +25,12 @@ new Vue({
                     this.profileTypes = response.data.profile_types.sort((a, b) => b.id - a.id);
                     this.siteLabel = response.data.site_label;
                     this.modalHeader = `Add ${this.siteLabel} Type`; 
-					$(document).ready(() => {
-						$('#profileTypesTable').DataTable({
-                            pageLength: 5,
-                            lengthMenu: [5, 10, 15, 20]
-						});
-					});
+					// $(document).ready(() => {
+					// 	$('#profileTypesTable').DataTable({
+                    //         pageLength: 5,
+                    //         lengthMenu: [5, 10, 15, 20]
+					// 	});
+					// });
 				}
 			})
 			.catch(e => {
@@ -110,8 +110,15 @@ new Vue({
 					}
 				);
 				if (response) {
-                    toastr.success('Profile Type Successfuly Saved');
-					this.profileTypes.unshift(response.data);
+					const itemsList = JSON.parse(JSON.stringify(this.profileTypes));
+					const items = itemsList.sort((a, b) => (a.profile > b.profile) ? 1 : -1)
+					// this.profileTypes = [];
+					// console.log('Before : ', this.profileTypes)
+					toastr.success('Profile Type Successfuly Saved');
+					items.unshift(response.data);
+					console.log('items : ', items);
+					this.profileTypes = items;
+					console.log('this.profileTypes : ', this.profileTypes)
 					if (!saveNew) {
 						this.toggleModal();
 					}
