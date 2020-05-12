@@ -21,26 +21,42 @@ install_activate_virtualenv() {
     pip3 install pipenv
     pipenv install
     source $(python3 -m pipenv --venv)/bin/activate
+
 }
 
 #@--- run linter ---@#
+<<<<<<< HEAD
 run_linter() {
     flake8 . --statistics
     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
     flake8 . --count --exit-zero --max-complexity=10  --statistics
 }
+=======
+# run_linter() {
+#     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+#     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+# }
+>>>>>>> Troubleshoot GA error
 
-#@--- run tests --- @#
-run_tests() {
-    echo "++++++++++++++++ Run tests ++++++++++++++++"
-    coverage run  manage.py test
-    coverage report
-}
+# #@--- run tests --- @#
+# run_tests() {
+#     echo "++++++++++++++++ Run tests ++++++++++++++++"
+#     coverage run  manage.py test
+#     coverage report
+# }
 
+<<<<<<< HEAD
 #@--- function to report coverage ---@#
 report_coverage() {
     bash <(curl -s https://codecov.io/bash)
 }
+=======
+# #@--- function to report coverage ---@#
+# report_coverage() {
+#     bash <(curl -s https://codecov.io/bash) 
+# }
+>>>>>>> Troubleshoot GA error
 
 
 #@--- Main function ---@#
@@ -53,13 +69,15 @@ main() {
     install_activate_virtualenv
 
     #@--- Run linter ---@#
-    run_linter
+    # run_linter
 
-    #@--- Run tests ---@#
-    run_tests
+    # #@--- Run tests ---@#
+    # run_tests
 
-    #@--- Report Coverage ---@#
-    report_coverage
+    # #@--- Report Coverage ---@#
+    # report_coverage
+
+    cd activity && ls
 }
 
 #@--- Run main function ---@#
