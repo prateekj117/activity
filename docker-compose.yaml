@@ -1,37 +1,35 @@
-
 version: '3.7'
-
 services:
-
-  web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/usr/src/activity/
-    ports:
-      - 8000:8000
-    depends_on:
-      - db
-    env_file:
-      - ./.env.dev
-
-  db:
-    image: postgres:12.0-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+  postgres-db:
+    restart: always
+    image: postgres:11
     environment:
-      - POSTGRES_USER=activity
-      - POSTGRES_PASSWORD=activity
-      - POSTGRES_DB=activity_dev
-    ports:
-      - 5432:5432
-
-  migration:
-    build: .
-    command: python manage.py migrate --noinput
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=activitydb
+      - POSTGRES_DB=activity
     volumes:
-      - .:/usr/src/activity/
+      - ./activity_postgres_db:/var/lib/postgresql/data
+    ports:
+      - '5435:5432'
+    expose:
+      - '5435'
+
+  app:
+    restart: always
+    build:
+      context: .
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/activity-app
+    environment:
+      ACTIVITY_CE_DB_NAME: 'activity'
+      ACTIVITY_CE_DB_USER: 'postgres'
+      ACTIVITY_CE_DB_PASSWORD: 'activitydb'
+      ACTIVITY_CE_DB_HOST: 'postgres-db'
+      ACTIVITY_CE_DB_PORT: 5432
     depends_on:
-      - db
-volumes:
-  postgres_data:
+      - postgres-db
+    entrypoint: ["/bin/bash", "/activity-app/.docker/start_app.sh"]
+    stdin_open: true
+    tty: true

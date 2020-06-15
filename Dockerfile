@@ -2,9 +2,10 @@
 FROM python:3.8.0-alpine
 
 # set work directory
-WORKDIR /usr/src/activity
+WORKDIR /activity-app
 
-RUN apk --update --upgrade add gcc musl-dev jpeg-dev zlib-dev libffi-dev cairo-dev pango-dev gdk-pixbuf
+
+RUN apk --update --upgrade add bash gcc musl-dev jpeg-dev zlib-dev libffi-dev cairo-dev pango-dev gdk-pixbuf
 
 # make psycopg2-binary install on alpine
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
@@ -13,18 +14,10 @@ RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 ENV PYTHONDONTWRITEBYTECODE 1 #Prevents Python from writing pyc files to disc
 ENV PYTHONUNBUFFERED 1 #Prevents Python from buffering stdout and stderr
 
-# Set environment variables
-ENV ACTIVITY_CE_DB_ENGINE=django.db.backends.postgresql
-ENV ACTIVITY_CE_DB_NAME=activity_dev
-ENV ACTIVITY_CE_DB_USER=activity
-ENV ACTIVITY_CE_DB_PASSWORD=activity
-ENV ACTIVITY_CE_DB_HOST=db
-ENV ACTIVITY_CE_DB_PORT=5432
-
 # Install dependencies
 RUN pip install --upgrade pip
-COPY ./requirements.txt /usr/src/activity/requirements.txt
-RUN pip install -r requirements.txt
-
-# Copy project
-COPY . /usr/src/activity/
+COPY . .
+RUN pip install -r requirements.txt && \
+    rm -rf /root/.cache && \
+    sed -i "s/EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'/EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'/" activity/settings/local-sample.py && \
+    chmod 777 /activity-app/.docker/start_app.sh
