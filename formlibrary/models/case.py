@@ -45,8 +45,6 @@ class Individual(models.Model):
     program = models.ManyToManyField(Program, blank=True)
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
-
-
     household = models.ForeignKey(
         Household, null=True, blank=True, on_delete=models.SET_NULL)
 
